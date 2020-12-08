@@ -101,7 +101,7 @@ resource "aws_route_table_association" "route" {
 
 resource "aws_route_table" "private_route" {
   count = "${var.private_subnets == "true" ? length(var.aws_zones) : 0}"
-  vpc_id = "${aws_vpc.vpc.id}"
+  vpc_id = aws_vpc.vpc.id
 
   # Default route through NAT
   route {
@@ -114,6 +114,6 @@ resource "aws_route_table" "private_route" {
 
 resource "aws_route_table_association" "private_route" {
   count = "${var.private_subnets == "true" ? length(var.aws_zones) : 0}"
-  subnet_id = "${element(aws_subnet.private_subnet.*.id, count.index)}"
-  route_table_id = "${element(aws_route_table.private_route.*.id, count.index)}"
+  subnet_id = element(aws_subnet.private_subnet.*.id, count.index)
+  route_table_id = element(aws_route_table.private_route.*.id, count.index)
 }
