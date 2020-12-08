@@ -3,8 +3,12 @@
 ############
 
 # Retrieve AWS credentials from env variables AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
-provider "aws" {
-  region = "${var.aws_region}"
+terraform {
+  required_providers {
+    aws = {
+      version = "~> 2.0"
+    }
+  }
 }
 
 ############
@@ -12,7 +16,7 @@ provider "aws" {
 ############
 
 resource "aws_vpc" "vpc" {
-  cidr_block = "${var.vpc_cidr}"
+  cidr_block = var.vpc_cidr
   enable_dns_hostnames = true
 
   tags = "${merge(map("Name", var.vpc_name), var.tags)}"
@@ -55,7 +59,7 @@ resource "aws_nat_gateway" "nat" {
 
   tags = "${merge(map("Name", format("%v-nat-%v", var.vpc_name, var.aws_zones[count.index])), var.tags)}"
 
-  depends_on = ["aws_eip.nat", "aws_internet_gateway.gw", "aws_subnet.public_subnet"]
+  depends_on = [aws_eip.nat, aws_internet_gateway.gw, aws_subnet.public_subnet]
 }
 
 # Subnet (private)
